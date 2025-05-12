@@ -1,0 +1,111 @@
+<% layout("/layouts/boilerplate.ejs") %>
+
+    <body>
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <!-- Listing Details Section -->
+                <div class="col-md-8">
+                    <div class="card shadow-lg border-0 rounded-4 p-4">
+                        <h3 class="text-center text-danger fw-bold">
+                            <%= listing.title %>
+                        </h3>
+
+                        <!-- Image Section -->
+                        <div class="text-center mb-3">
+                            <img src="<%= listing.image.url %>" class="img-fluid rounded-3 shadow-sm"
+                                alt="listing_image" style="max-height: 400px; object-fit: cover;">
+                        </div>
+
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><strong>Description:</strong>
+                                <%= listing.description %>
+                            </li>
+                            <li class="list-group-item"><strong>Price:</strong>
+                                <span class="text-success fw-bold">&#8377 <%= listing.price.toLocaleString("en-IN") %>
+                                </span>
+                            </li>
+                            <li class="list-group-item"><strong>Location:</strong>
+                                <%= listing.location %>
+                            </li>
+                            <li class="list-group-item"><strong>Country:</strong>
+                                <%= listing.country %>
+                            </li>
+                        </ul>
+
+                        <!-- Edit & Delete Buttons -->
+                        <div class="d-flex justify-content-center mt-4">
+                            <a href="/listings/<%= listing._id %>/edit"
+                                class="btn btn-danger me-3 px-4 py-2 fw-bold shadow-sm">✏️ Edit</a>
+                            <form action="/listings/<%= listing._id %>?_method=DELETE" method="post">
+                                <button class="btn btn-dark px-4 py-2 fw-bold shadow-sm">🗑️ Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leave a Review Section -->
+                <% if(currUser){ %>
+                    <div class="col-md-8 mt-5">
+                        <div class="card shadow-lg border-0 rounded-4 p-4">
+                            <h4 class="text-center text-secondary fw-bold">💬 Leave a Review</h4>
+                            <form action="/listings/<%= listing._id %>/reviews" method="post" novalidate
+                                class="needs-validation">
+                                <div class="mb-3">
+                                    <label for="rating" class="form-label fw-bold">⭐ Rating</label>
+                                    <input type="range" class="form-range" name="review[rating]" id="range" min="1"
+                                        max="5">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="comment" class="form-label fw-bold">✍️ Comments</label>
+                                    <textarea name="review[comment]" class="form-control rounded-3 shadow-sm" cols="30"
+                                        rows="4" id="comment" required></textarea>
+                                </div>
+                                <div class="text-center">
+                                    <button class="btn btn-primary px-5 py-2 fw-bold shadow-sm">Submit Review ✅</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <% } %>
+                        <div class="col-md-8 mt-4">
+                            <div class="card shadow-sm border-0 rounded-3 p-4">
+                                <h4 class="text-center text-secondary fw-bold">📝 All Reviews</h4>
+                                <div class="mt-3">
+                                    <% if (listing.reviews.length> 0) { %>
+                                        <% listing.reviews.forEach(review=> { %>
+                                            <div class="card mb-3 border-0 shadow-sm p-3">
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-user-circle fa-2x text-primary me-3"></i>
+                                                    <div>
+                                                        <p class="mb-1 fw-bold">
+                                                            <%= review.comment %>
+                                                        </p>
+                                                        <p class="text-warning mb-1">
+                                                            <% for (let i=0; i < 5; i++) { %>
+                                                                <i
+                                                                    class="<%= i < review.rating ? 'fas' : 'far' %> fa-star"></i>
+                                                                <% } %>
+                                                        </p>
+                                                    </div>
+                                                    <form
+                                                        action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"
+                                                        method="POST" class="ms-auto">
+                                                        <button class="btn btn-sm btn-outline-danger">🗑️
+                                                            Delete</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                            <% }) %>
+                                                <% } else { %>
+                                                    <p class="text-muted text-center">No reviews yet. Be the first to
+                                                        review! ✍️
+                                                    </p>
+                                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+
+
+            </div>
+        </div>
+    </body>
